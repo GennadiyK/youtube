@@ -1,12 +1,10 @@
-@import '~antd/dist/antd.css';
-
-.app {
+.main {
   height: 100vh;
   display: grid;
   grid-template-areas: 'header header'
-                       'content aside'
-                        'content aside'
-                        'footer footer';
+  'content aside'
+  'content aside'
+  'footer footer';
   grid-template-rows: auto 1fr auto;
   grid-auto-columns: 1fr 10rem;
 }
@@ -14,6 +12,22 @@
 .header {
   grid-area: header;
   border-bottom: 1px solid grey;
+  display: grid;
+  grid-template-areas: 'title search';
+  grid-template-columns: auto 1fr;
+  grid-column-gap: 1rem;
+  padding: 1rem;
+  align-items: center;
+
+}
+
+.headerTitle {
+  grid-area: title;
+  margin: 0;
+}
+
+.searchForm {
+  grid-area: search;
 }
 
 .content {
