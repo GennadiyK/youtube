@@ -1,0 +1,23 @@
+.main {
+  height: 100vh;
+  display: grid;
+  grid-template-areas: 'header header'
+  'content content'
+  'content content'
+  'footer footer';
+  grid-template-rows: auto 1fr auto;
+  grid-auto-columns: 1fr 10rem;
+}
+
+
+.searchForm {
+  grid-area: search;
+}
+
+.content {
+  grid-area: content;
+  max-height: 100%;
+  overflow: auto;
+  padding: 1rem;
+}
+

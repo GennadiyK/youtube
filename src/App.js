@@ -1,11 +1,15 @@
 import React from 'react';
 import './App.css';
-import Content from './pages/Main'
+import { Main } from "./pages";
 
 function App() {
   return (
-    <Content />
+      <Main/>
   );
 }
 
 export default App;
+
+
+
+
