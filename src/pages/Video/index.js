@@ -15,10 +15,12 @@ const Video = (props) => {
         )}/>
     </Header>
     <section className={styles.videoSection}>
-      <iframe src={videoUrl}
-              frameBorder="0"
-              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen className={styles.video}></iframe>
+      <iframe
+        title={id}
+        src={videoUrl}
+        frameBorder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen className={styles.video}></iframe>
     </section>
   </main>)
 }

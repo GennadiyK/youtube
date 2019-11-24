@@ -44,7 +44,7 @@ export default (props) => {
       pathname: '/results',
       search: `q=${searchValue}`}
     )
-  }, [searchValue])
+  }, [searchValue, props.history])
 
   const handlerLoadMore = async () => {
     try {
