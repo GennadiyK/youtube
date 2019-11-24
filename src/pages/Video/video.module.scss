@@ -1,0 +1,16 @@
+.main {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+          'header'
+          'video';
+}
+.videoSection {
+  grid-area: video;
+}
+
+.video {
+  height: 100%;
+  width: 100%;
+}

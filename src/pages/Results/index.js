@@ -1,33 +1,35 @@
 import React, {useEffect, useState} from 'react';
-import { MemoryRouter } from 'react-router'
+import {
+  Link
+} from "react-router-dom";
 import queryString from 'query-string';
 import { List, Button, Skeleton } from 'antd';
 import styles from './results.module.scss'
 import { Header, SearchForm } from '../../components'
 import { api } from '../../api'
 
-const fetchData = (q) => {
+const fetchData = (q, pageToken) => {
   if(Boolean(q) && q.trim().length) {
-    return api({q, part: 'snippet', maxResults: 3})
+    return api({q, part: 'snippet', maxResults: 10, pageToken})
   }
   return {}
 }
-
-const onLoadMore = () => console.log('load more')
 
 export default (props) => {
   const {q} = queryString.parse(props.location.search);
   const [searchValue, setSearchValue] = useState(q);
   const [videoDataItems, setVideoDataItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [pageToken, setNextPageToken] = useState('');
+  const isLoadMore = pageToken && !loading
 
-
-  console.log(q)
   useEffect(() => {
     const runEffect = async () => {
       try {
         setLoading(true)
         const { data } = await fetchData(searchValue);
+        const {nextPageToken} = data
+        setNextPageToken(nextPageToken)
         setLoading(false)
         data && setVideoDataItems(data.items);
       } catch(e) {
@@ -44,25 +46,33 @@ export default (props) => {
     )
   }, [searchValue])
 
+  const handlerLoadMore = async () => {
+    try {
+      setLoading(true);
+      const {data} = await fetchData(q, pageToken);
+      let newData = []
+      if(data) {
+        const {nextPageToken} = data
+        newData = videoDataItems.concat(data.items)
+        setNextPageToken(nextPageToken)
+      }
+      setVideoDataItems(newData);
+      setLoading(false);
+    } catch(e) {
+      console.error(e)
+    }
+  }
+
   const loadMore =
-    !loading ? (
+    isLoadMore ? (
       <div
-        style={{
-          textAlign: 'center',
-          marginTop: 12,
-          height: 32,
-          lineHeight: '32px',
-        }}
+        className={styles.loadMoreWrapper}
       >
-        <Button onClick={onLoadMore}>loading more</Button>
+        <Button onClick={handlerLoadMore}>loading more</Button>
       </div>
     ) : null;
 
-  console.log(searchValue)
-  console.log(videoDataItems)
-
   return (
-    <MemoryRouter>
     <main className={styles.main}>
       <Header>
         <SearchForm
@@ -79,10 +89,9 @@ export default (props) => {
           dataSource={videoDataItems}
           renderItem = {item => {
             const {videoId, channelId} = item && item.id;
-
             return (<List.Item
               key={videoId || channelId}
-              actions={[<a key="list-loadmore-edit">watch video</a>]}
+              actions={[<Link key="list-loadmore-edit" to={`/video/${videoId || channelId}`}>watch video</Link>]}
               extra={
                 <img
                   width={150}
@@ -93,7 +102,7 @@ export default (props) => {
             >
               <Skeleton avatar title={false} loading={loading} active>
                 <List.Item.Meta
-                  title={<a href="https://ant.design">{item.snippet.title}</a>}
+                  title={<Link to={`/video/${videoId || channelId}`}>{item.snippet.title}</Link>}
                   description={item.snippet.description}
                 />
               </Skeleton>
@@ -102,6 +111,5 @@ export default (props) => {
         />
       </section>
     </main>
-    </MemoryRouter>
   )
 }

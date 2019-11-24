@@ -1,7 +1,8 @@
 .main {
   height: 100vh;
   display: grid;
-  grid-template-areas: 'header';
+  grid-template-areas: 'header' 'footer';
+  grid-template-rows: 1fr auto;
   align-items: center;
 }
 
