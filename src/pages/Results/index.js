@@ -10,7 +10,7 @@ import { api } from '../../api'
 
 const fetchData = (q, pageToken) => {
   if(Boolean(q) && q.trim().length) {
-    return api({q, part: 'snippet', maxResults: 10, pageToken})
+    return api({q, part: 'snippet', maxResults: 3, pageToken})
   }
   return {}
 }
@@ -21,21 +21,26 @@ export default (props) => {
   const [videoDataItems, setVideoDataItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pageToken, setNextPageToken] = useState('');
-  const isLoadMore = pageToken && !loading
+  const isLoadMore = pageToken && !loading;
+
+  const runEffect = async () => {
+    try {
+      setLoading(true);
+      const { data } = await fetchData(searchValue, pageToken);
+      let newData = []
+      if(data) {
+        const {nextPageToken} = data;
+        newData = videoDataItems.concat(data.items);
+        setNextPageToken(nextPageToken);
+      }
+      setVideoDataItems(newData);
+      setLoading(false);
+    } catch(e) {
+      console.error(e);
+    }
+  };
 
   useEffect(() => {
-    const runEffect = async () => {
-      try {
-        setLoading(true)
-        const { data } = await fetchData(searchValue);
-        const {nextPageToken} = data
-        setNextPageToken(nextPageToken)
-        setLoading(false)
-        data && setVideoDataItems(data.items);
-      } catch(e) {
-        console.error(e)
-      }
-    };
     runEffect();
   }, [searchValue]);
 
@@ -43,32 +48,15 @@ export default (props) => {
     props.history.push({
       pathname: '/results',
       search: `q=${searchValue}`}
-    )
-  }, [searchValue, props.history])
-
-  const handlerLoadMore = async () => {
-    try {
-      setLoading(true);
-      const {data} = await fetchData(q, pageToken);
-      let newData = []
-      if(data) {
-        const {nextPageToken} = data
-        newData = videoDataItems.concat(data.items)
-        setNextPageToken(nextPageToken)
-      }
-      setVideoDataItems(newData);
-      setLoading(false);
-    } catch(e) {
-      console.error(e)
-    }
-  }
+    );
+  }, [searchValue, props.history]);
 
   const loadMore =
     isLoadMore ? (
       <div
         className={styles.loadMoreWrapper}
       >
-        <Button onClick={handlerLoadMore}>loading more</Button>
+        <Button onClick={runEffect}>loading more</Button>
       </div>
     ) : null;
 

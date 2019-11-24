@@ -3,7 +3,8 @@ import { withRouter } from 'react-router'
 import styles from './main.module.scss'
 import { Header, SearchForm, Footer } from '../../components'
 
-const Main = (props) => (<main className={styles.main}>
+const Main = (props) => (
+  <main className={styles.main}>
      <Header className={styles.header}>
        <SearchForm
          onSearchHandler={(
